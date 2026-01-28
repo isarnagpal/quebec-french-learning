@@ -484,7 +484,7 @@
             <button class="btn btn-secondary mb-3" onclick="backToDashboard()">
                 <i class="bi bi-arrow-left"></i> Retour
             </button>
-            <div id="writingModule"></div>
+            <div id="writing-feedback-container"></div>
         </div>
     </div>
     
@@ -525,6 +525,11 @@
     <script src="module-reading.js"></script>
     <script src="module-vocabulary.js"></script>
     <script src="module-all.js"></script>
+    
+    <!-- AI Writing Feedback System -->
+    <script src="ai-config.js"></script>
+    <script src="ai-writing-service.js"></script>
+    <script src="ai-writing-ui.js"></script>
     
     <script>
         // ============ UI Elements ============
@@ -703,6 +708,45 @@
             // Refresh dashboard
             const user = JSON.parse(localStorage.getItem('currentUser'));
             if (user) showDashboard(user);
+        }
+
+        function startReading() {
+            dashboardScreen.classList.add('hidden');
+            document.getElementById('readingScreen').classList.remove('hidden');
+        }
+
+        function startVocabulary() {
+            dashboardScreen.classList.add('hidden');
+            document.getElementById('vocabularyScreen').classList.remove('hidden');
+        }
+
+        function startWriting() {
+            dashboardScreen.classList.add('hidden');
+            document.getElementById('writingScreen').classList.remove('hidden');
+            
+            // Initialize AI Writing UI
+            if (!window.aiWritingUIInstance) {
+                try {
+                    const aiConfig = window.AI_CONFIG || {};
+                    const aiService = new AIWritingService(aiConfig);
+                    const historyService = new FeedbackHistoryService();
+                    window.aiWritingUIInstance = new AIWritingUI(aiService, historyService);
+                    window.aiWritingUIInstance.init();
+                } catch (error) {
+                    console.error('Error initializing AI Writing UI:', error);
+                    alert('AI Writing module could not be initialized. Please check configuration.');
+                }
+            }
+        }
+
+        function startListening() {
+            dashboardScreen.classList.add('hidden');
+            document.getElementById('listeningScreen').classList.remove('hidden');
+        }
+
+        function startSpeaking() {
+            dashboardScreen.classList.add('hidden');
+            document.getElementById('speakingScreen').classList.remove('hidden');
         }
     </script>
 </body>
