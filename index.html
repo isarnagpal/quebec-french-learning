@@ -737,6 +737,12 @@
             if (gamificationInitialized) return;
             
             try {
+                // Check if gamification scripts are loaded
+                if (typeof GamificationSystem === 'undefined') {
+                    console.warn('Gamification scripts not loaded - skipping initialization');
+                    return;
+                }
+                
                 // Initialize core systems
                 window.gamification = new GamificationSystem();
                 window.achievementsUI = new AchievementUI(window.gamification, ACHIEVEMENTS);
@@ -757,56 +763,68 @@
                 console.log('Gamification systems initialized successfully');
             } catch (error) {
                 console.error('Error initializing gamification:', error);
+                // Don't let gamification errors break the app
+                console.warn('Continuing without gamification features');
             }
         }
         
         // Render achievements preview on dashboard
         function renderAchievementsPreview() {
             const container = document.getElementById('achievementsPreview');
-            if (!container || !window.gamification) return;
+            if (!container) return;
             
-            const stats = window.gamification.stats;
-            const unlockedAchievements = ACHIEVEMENTS.filter(a => 
-                window.gamification.checkAchievement(a.id, stats)
-            );
-            
-            const recentUnlocked = unlockedAchievements.slice(-6);
-            
-            let html = `
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            🏆 Achievements (${unlockedAchievements.length}/${ACHIEVEMENTS.length})
-                        </h5>
-                        <div class="row">
-            `;
-            
-            recentUnlocked.forEach(achievement => {
+            try {
+                if (!window.gamification || typeof ACHIEVEMENTS === 'undefined') {
+                    container.innerHTML = '<div class="card"><div class="card-body"><p class="text-muted">Achievements loading...</p></div></div>';
+                    return;
+                }
+                
+                const stats = window.gamification.stats;
+                const unlockedAchievements = ACHIEVEMENTS.filter(a => 
+                    window.gamification.checkAchievement(a.id, stats)
+                );
+                
+                const recentUnlocked = unlockedAchievements.slice(-6);
+                
+                let html = `
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                🏆 Achievements (${unlockedAchievements.length}/${ACHIEVEMENTS.length})
+                            </h5>
+                            <div class="row">
+                `;
+                
+                recentUnlocked.forEach(achievement => {
+                    html += `
+                        <div class="col-6 col-md-2 mb-2 text-center">
+                            <div class="achievement-badge-mini">
+                                <div style="font-size: 2rem;">${achievement.icon}</div>
+                                <small class="d-block text-muted">${achievement.name}</small>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                if (recentUnlocked.length === 0) {
+                    html += `
+                        <div class="col-12 text-center text-muted">
+                            <p>Start learning to unlock achievements! 🎯</p>
+                        </div>
+                    `;
+                }
+                
                 html += `
-                    <div class="col-6 col-md-2 mb-2 text-center">
-                        <div class="achievement-badge-mini">
-                            <div style="font-size: 2rem;">${achievement.icon}</div>
-                            <small class="d-block text-muted">${achievement.name}</small>
+                            </div>
                         </div>
                     </div>
                 `;
-            });
-            
-            if (recentUnlocked.length === 0) {
-                html += `
-                    <div class="col-12 text-center text-muted">
-                        <p>Start learning to unlock achievements! 🎯</p>
-                    </div>
-                `;
+                
+                container.innerHTML = html;
+            } catch (error) {
+                console.error('Error rendering achievements preview:', error);
+                container.innerHTML = '<div class="card"><div class="card-body"><p class="text-muted">Achievements temporarily unavailable</p></div></div>';
             }
-            
-            html += `
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            container.innerHTML = html;
         }
         
         // ============ Listen for Cloud Updates ============
