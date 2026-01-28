@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quebec French Learning - A1 → C1 en 12 Mois</title>
+    
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <style>
+        :root {
+            --primary-color: #0066CC;
+            --secondary-color: #FF3B30;
+            --success-color: #34C759;
+            --background: #F2F2F7;
+            --warning-color: #FF9500;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--background);
+        }
+        
+        /* Sync Status Indicator */
+        .sync-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1050;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .sync-indicator.offline {
+            background: #FF3B30;
+            color: white;
+        }
+        
+        .sync-indicator.syncing {
+            background: #FF9500;
+            color: white;
+        }
+        
+        .sync-indicator.synced {
+            background: #34C759;
+            color: white;
+        }
+        
+        .sync-indicator.error {
+            background: #FF3B30;
+            color: white;
+        }
+        
+        .sync-spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .auth-card {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+        
+        .app-logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .app-logo i {
+            font-size: 64px;
+            color: var(--primary-color);
+        }
+        
+        .btn-primary {
+            background: var(--primary-color);
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            font-weight: 600;
+        }
+        
+        .btn-google {
+            background: white;
+            border: 1px solid #E5E5EA;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn-google:hover {
+            background: #f8f9fa;
+        }
+        
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #E5E5EA;
+        }
+        
+        .divider span {
+            padding: 0 10px;
+            color: #999;
+            font-size: 14px;
+        }
+        
+        .form-control {
+            border-radius: 8px;
+            border: 1px solid #E5E5EA;
+            padding: 12px;
+        }
+        
+        .dashboard-header {
+            background: white;
+            border-bottom: 1px solid #E5E5EA;
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .stat-card h3 {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin: 0;
+        }
+        
+        .module-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            border: 2px solid transparent;
+        }
+        
+        .module-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            border-color: var(--primary-color);
+        }
+        
+        .module-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .level-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .level-a1 { background: #FFE5E5; color: #FF3B30; }
+        .level-a2 { background: #FFE5CC; color: #FF9500; }
+        .level-b1 { background: #FFF5CC; color: #FFCC00; }
+        .level-b2 { background: #E5F5FF; color: #007AFF; }
+        .level-c1 { background: #E5FFE5; color: #34C759; }
+        
+        .xp-bar-container {
+            background: #E5E5EA;
+            height: 8px;
+            border-radius: 4px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        
+        .xp-bar {
+            background: linear-gradient(90deg, #0066CC, #00AAFF);
+            height: 100%;
+            transition: width 0.5s ease;
+        }
+        
+        .reading-text-box {
+            background: #F9F9F9;
+            padding: 24px;
+            border-radius: 12px;
+            margin: 20px 0;
+            font-size: 18px;
+            line-height: 1.8;
+        }
+        
+        .flashcard {
+            width: 100%;
+            max-width: 500px;
+            height: 300px;
+            margin: 40px auto;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        
+        .flashcard-front, .flashcard-back {
+            width: 100%;
+            height: 100%;
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .flashcard-front h2, .flashcard-back h2 {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        
+        .option-btn {
+            margin-bottom: 10px !important;
+            text-align: left !important;
+        }
+        
+        textarea.form-control {
+            min-height: 300px;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1100;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sync Status Indicator -->
+    <div id="syncIndicator" class="sync-indicator offline">
+        <i class="bi bi-cloud-slash"></i>
+        <span id="syncStatusText">Offline Mode</span>
+    </div>
+    
+    <!-- Toast Container for Notifications -->
+    <div class="toast-container"></div>
+    
+    <!-- Auth Screen -->
+    <div id="authScreen" class="auth-container">
+        <div class="auth-card">
+            <div class="app-logo">
+                <i class="bi bi-translate"></i>
+                <h2>Quebec French</h2>
+                <p class="text-muted">A1 → C1 en 12 Mois</p>
+            </div>
+            
+            <div id="loginForm">
+                <h4 class="mb-4">Connexion</h4>
+                
+                <!-- Google Sign In -->
+                <button class="btn btn-google w-100 mb-3" id="googleSignInBtn">
+                    <svg width="18" height="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+                        <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                        <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                        <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+                        <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+                    </svg>
+                    Se connecter avec Google
+                </button>
+                
+                <div class="divider">
+                    <span>ou</span>
+                </div>
+                
+                <form id="loginFormElement">
+                    <div class="mb-3">
+                        <input type="email" class="form-control" id="loginEmail" placeholder="Email" required>
+                    </div>
+                    <div class="mb-3">
+                        <input type="password" class="form-control" id="loginPassword" placeholder="Mot de passe" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 mb-3">Se Connecter</button>
+                </form>
+                <p class="text-center mb-0">
+                    Pas de compte? 
+                    <a href="#" id="showSignup" class="text-primary">S'inscrire</a>
+                </p>
+            </div>
+            
+            <div id="signupForm" class="hidden">
+                <h4 class="mb-4">Créer un Compte</h4>
+                <form id="signupFormElement">
+                    <div class="mb-3">
+                        <input type="text" class="form-control" id="signupName" placeholder="Nom complet" required>
+                    </div>
+                    <div class="mb-3">
+                        <input type="email" class="form-control" id="signupEmail" placeholder="Email" required>
+                    </div>
+                    <div class="mb-3">
+                        <input type="password" class="form-control" id="signupPassword" placeholder="Mot de passe (min 6 caractères)" required minlength="6">
+                    </div>
+                    <div class="mb-3">
+                        <select class="form-control" id="signupLevel" required>
+                            <option value="">Niveau de départ</option>
+                            <option value="A1">A1 - Débutant</option>
+                            <option value="A2">A2 - Élémentaire</option>
+                            <option value="B1">B1 - Intermédiaire</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 mb-3">Créer le Compte</button>
+                </form>
+                <p class="text-center mb-0">
+                    Déjà inscrit? 
+                    <a href="#" id="showLogin" class="text-primary">Se connecter</a>
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Dashboard Screen -->
+    <div id="dashboardScreen" class="hidden">
+        <div class="dashboard-header">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h3 class="mb-0">Bonjour, <span id="userName"></span>!</h3>
+                        <div class="mt-2">
+                            <span id="userLevel" class="level-badge level-a1">A1</span>
+                            <span class="ms-2">Niveau <span id="userXPLevel">1</span></span>
+                        </div>
+                        <div class="xp-bar-container" style="max-width: 300px;">
+                            <div id="xpBar" class="xp-bar" style="width: 0%"></div>
+                        </div>
+                        <small class="text-muted">
+                            <span id="userXP">0</span> / <span id="userNextLevelXP">100</span> XP
+                        </small>
+                    </div>
+                    <div class="col-auto">
+                        <button class="btn btn-danger" id="logoutBtn">
+                            <i class="bi bi-box-arrow-right"></i> Déconnexion
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="container">
+            <!-- Stats -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <h3 id="todayMinutes">0</h3>
+                        <p>Minutes Aujourd'hui</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <h3 id="questionsAnswered">0</h3>
+                        <p>Questions Complétées</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <h3 id="streakDays">0</h3>
+                        <p>Jours d'Affilée</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <h3 id="vocabLearned">0</h3>
+                        <p>Mots Appris</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Modules -->
+            <h4 class="mb-3">Modules d'Apprentissage</h4>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="module-card" onclick="startReading()">
+                        <div class="module-icon">📖</div>
+                        <h5>Compréhension Écrite</h5>
+                        <p class="text-muted">200 textes de tous niveaux</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="module-card" onclick="startVocabulary()">
+                        <div class="module-icon">📚</div>
+                        <h5>Vocabulaire</h5>
+                        <p class="text-muted">2000 mots avec répétition espacée</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="module-card" onclick="startWriting()">
+                        <div class="module-icon">✍️</div>
+                        <h5>Expression Écrite</h5>
+                        <p class="text-muted">400 sujets d'écriture</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="module-card" onclick="startListening()">
+                        <div class="module-icon">🎧</div>
+                        <h5>Compréhension Orale</h5>
+                        <p class="text-muted">200 audios avec accent québécois</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="module-card" onclick="startSpeaking()">
+                        <div class="module-icon">🗣️</div>
+                        <h5>Expression Orale</h5>
+                        <p class="text-muted">400 exercices de prononciation</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Reading Screen -->
+    <div id="readingScreen" class="hidden">
+        <div class="container mt-4">
+            <button class="btn btn-secondary mb-3" onclick="backToDashboard()">
+                <i class="bi bi-arrow-left"></i> Retour
+            </button>
+            <div id="readingModule"></div>
+        </div>
+    </div>
+    
+    <!-- Vocabulary Screen -->
+    <div id="vocabularyScreen" class="hidden">
+        <div class="container mt-4">
+            <button class="btn btn-secondary mb-3" onclick="backToDashboard()">
+                <i class="bi bi-arrow-left"></i> Retour
+            </button>
+            <div id="vocabularyModule"></div>
+        </div>
+    </div>
+    
+    <!-- Writing Screen -->
+    <div id="writingScreen" class="hidden">
+        <div class="container mt-4">
+            <button class="btn btn-secondary mb-3" onclick="backToDashboard()">
+                <i class="bi bi-arrow-left"></i> Retour
+            </button>
+            <div id="writingModule"></div>
+        </div>
+    </div>
+    
+    <!-- Listening Screen -->
+    <div id="listeningScreen" class="hidden">
+        <div class="container mt-4">
+            <button class="btn btn-secondary mb-3" onclick="backToDashboard()">
+                <i class="bi bi-arrow-left"></i> Retour
+            </button>
+            <div id="listeningModule"></div>
+        </div>
+    </div>
+    
+    <!-- Speaking Screen -->
+    <div id="speakingScreen" class="hidden">
+        <div class="container mt-4">
+            <button class="btn btn-secondary mb-3" onclick="backToDashboard()">
+                <i class="bi bi-arrow-left"></i> Retour
+            </button>
+            <div id="speakingModule"></div>
+        </div>
+    </div>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- App Scripts -->
+    <script src="firebase-config.js"></script>
+    <script src="firebase-service.js"></script>
+    <script src="real-vocabulary-complete.js"></script>
+    <script src="content-reading.js"></script>
+    <script src="content-vocabulary.js"></script>
+    <script src="content-prompts.js"></script>
+    <script src="module-reading.js"></script>
+    <script src="module-vocabulary.js"></script>
+    <script src="module-all.js"></script>
+    
+    <script>
+        // ============ UI Elements ============
+        const authScreen = document.getElementById('authScreen');
+        const dashboardScreen = document.getElementById('dashboardScreen');
+        const loginForm = document.getElementById('loginForm');
+        const signupForm = document.getElementById('signupForm');
+        const syncIndicator = document.getElementById('syncIndicator');
+        const syncStatusText = document.getElementById('syncStatusText');
+        
+        // ============ Sync Status Updates ============
+        firebaseService.onSyncStatusChange((status) => {
+            syncIndicator.className = `sync-indicator ${status}`;
+            
+            switch(status) {
+                case 'offline':
+                    syncIndicator.innerHTML = '<i class="bi bi-cloud-slash"></i><span>Offline Mode</span>';
+                    break;
+                case 'syncing':
+                    syncIndicator.innerHTML = '<div class="sync-spinner"></div><span>Syncing...</span>';
+                    break;
+                case 'synced':
+                    syncIndicator.innerHTML = '<i class="bi bi-cloud-check"></i><span>Synced</span>';
+                    setTimeout(() => {
+                        if (firebaseService.syncStatus === 'synced') {
+                            syncIndicator.style.opacity = '0.7';
+                        }
+                    }, 2000);
+                    break;
+                case 'error':
+                    syncIndicator.innerHTML = '<i class="bi bi-exclamation-triangle"></i><span>Sync Error</span>';
+                    break;
+            }
+        });
+        
+        // ============ Toast Notifications ============
+        function showToast(message, type = 'info') {
+            const toastHtml = `
+                <div class="toast align-items-center text-white bg-${type === 'success' ? 'success' : type === 'error' ? 'danger' : 'primary'} border-0" role="alert">
+                    <div class="d-flex">
+                        <div class="toast-body">${message}</div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                    </div>
+                </div>
+            `;
+            
+            const container = document.querySelector('.toast-container');
+            container.insertAdjacentHTML('beforeend', toastHtml);
+            
+            const toastElement = container.lastElementChild;
+            const toast = new bootstrap.Toast(toastElement);
+            toast.show();
+            
+            toastElement.addEventListener('hidden.bs.toast', () => {
+                toastElement.remove();
+            });
+        }
+        
+        // ============ Check Existing Session ============
+        const currentUser = localStorage.getItem('currentUser');
+        if (currentUser) {
+            showDashboard(JSON.parse(currentUser));
+        }
+        
+        // ============ Auth Form Toggles ============
+        document.getElementById('showSignup').addEventListener('click', (e) => {
+            e.preventDefault();
+            loginForm.classList.add('hidden');
+            signupForm.classList.remove('hidden');
+        });
+        
+        document.getElementById('showLogin').addEventListener('click', (e) => {
+            e.preventDefault();
+            signupForm.classList.add('hidden');
+            loginForm.classList.remove('hidden');
+        });
+        
+        // ============ Google Sign In ============
+        document.getElementById('googleSignInBtn').addEventListener('click', async () => {
+            const result = await firebaseService.signInWithGoogle();
+            
+            if (result.success) {
+                localStorage.setItem('currentUser', JSON.stringify(result.user));
+                showDashboard(result.user);
+                showToast('Connexion réussie avec Google!', 'success');
+            } else {
+                showToast(result.error || 'Erreur de connexion', 'error');
+            }
+        });
+        
+        // ============ Email/Password Login ============
+        document.getElementById('loginFormElement').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            const result = await firebaseService.signIn(email, password);
+            
+            if (result.success) {
+                localStorage.setItem('currentUser', JSON.stringify(result.user));
+                showDashboard(result.user);
+                showToast('Connexion réussie!', 'success');
+            } else {
+                showToast(result.error || 'Email ou mot de passe invalide', 'error');
+            }
+        });
+        
+        // ============ Email/Password Signup ============
+        document.getElementById('signupFormElement').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            const level = document.getElementById('signupLevel').value;
+            
+            const result = await firebaseService.signUp(email, password, name, level);
+            
+            if (result.success) {
+                localStorage.setItem('currentUser', JSON.stringify(result.user));
+                showDashboard(result.user);
+                showToast('Compte créé avec succès!', 'success');
+            } else {
+                showToast(result.error || 'Erreur lors de la création du compte', 'error');
+            }
+        });
+        
+        // ============ Logout ============
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+            await firebaseService.signOut();
+            location.reload();
+        });
+        
+        // ============ Show Dashboard ============
+        function showDashboard(user) {
+            authScreen.classList.add('hidden');
+            dashboardScreen.classList.remove('hidden');
+            
+            // User info
+            document.getElementById('userName').textContent = user.name;
+            document.getElementById('userLevel').textContent = user.level || 'A1';
+            document.getElementById('userLevel').className = `level-badge level-${(user.level || 'A1').toLowerCase()}`;
+            
+            // XP and Level
+            const levelSystem = user.level_system || { currentLevel: 1, currentXP: 0, nextLevelXP: 100 };
+            document.getElementById('userXPLevel').textContent = levelSystem.currentLevel;
+            document.getElementById('userXP').textContent = levelSystem.currentXP;
+            document.getElementById('userNextLevelXP').textContent = levelSystem.nextLevelXP;
+            
+            const xpPercentage = (levelSystem.currentXP / levelSystem.nextLevelXP) * 100;
+            document.getElementById('xpBar').style.width = `${xpPercentage}%`;
+            
+            // Progress stats
+            const progress = user.progress || {};
+            document.getElementById('todayMinutes').textContent = progress.studyTimeMinutes || 0;
+            document.getElementById('questionsAnswered').textContent = progress.readingCompleted || 0;
+            document.getElementById('streakDays').textContent = progress.streak || 0;
+            document.getElementById('vocabLearned').textContent = progress.vocabMastered || 0;
+        }
+        
+        // ============ Listen for Cloud Updates ============
+        window.addEventListener('userDataUpdated', (event) => {
+            const userData = event.detail;
+            showDashboard(userData);
+            showToast('Données synchronisées depuis le cloud!', 'info');
+        });
+        
+        // ============ Navigation Functions ============
+        function backToDashboard() {
+            document.getElementById('readingScreen').classList.add('hidden');
+            document.getElementById('vocabularyScreen').classList.add('hidden');
+            document.getElementById('writingScreen').classList.add('hidden');
+            document.getElementById('listeningScreen').classList.add('hidden');
+            document.getElementById('speakingScreen').classList.add('hidden');
+            dashboardScreen.classList.remove('hidden');
+            
+            // Refresh dashboard
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            if (user) showDashboard(user);
+        }
+    </script>
+</body>
+</html>
