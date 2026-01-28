@@ -1,0 +1,52 @@
+# Quebec French Learning App - Git Ignore
+
+# API Keys & Secrets (NEVER COMMIT THESE!)
+audio-config.js
+firebase-config-private.js
+ai-config.js
+openai-config.js
+claude-config.js
+
+# Environment files
+.env
+.env.local
+.env.production
+
+# Node modules
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build files
+dist/
+build/
+*.min.js
+*.map
+
+# Cache
+.cache/
+.temp/
+
+# Logs
+logs/
+*.log
+
+# Testing
+coverage/
+.nyc_output/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
