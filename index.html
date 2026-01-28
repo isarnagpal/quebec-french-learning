@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quebec French Learning - A1 → C1</title>
+    
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <style>
+        :root {
+            --primary-color: #0066CC;
+            --secondary-color: #FF3B30;
+            --success-color: #34C759;
+            --background: #F2F2F7;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--background);
+        }
+        
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .auth-card {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+        
+        .app-logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .app-logo i {
+            font-size: 64px;
+            color: var(--primary-color);
+        }
+        
+        .btn-primary {
+            background: var(--primary-color);
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            font-weight: 600;
+        }
+        
+        .btn-primary:hover {
+            background: #0052A3;
+        }
+        
+        .form-control {
+            border-radius: 8px;
+            border: 1px solid #E5E5EA;
+            padding: 12px;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(0, 102, 204, 0.25);
+        }
+        
+        .dashboard-header {
+            background: white;
+            border-bottom: 1px solid #E5E5EA;
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .stat-card h3 {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin: 0;
+        }
+        
+        .stat-card p {
+            margin: 0;
+            color: #8E8E93;
+            font-size: 14px;
+        }
+        
+        .level-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .level-a1 { background: #FFE5E5; color: #FF3B30; }
+        .level-a2 { background: #FFE5CC; color: #FF9500; }
+        .level-b1 { background: #FFF5CC; color: #FFCC00; }
+        .level-b2 { background: #E5F5FF; color: #007AFF; }
+        .level-c1 { background: #E5FFE5; color: #34C759; }
+        
+        .btn-logout {
+            background: #FF3B30;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .module-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 2px solid transparent;
+        }
+        
+        .module-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            border-color: var(--primary-color);
+        }
+        
+        .module-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+        
+        .progress-bar-custom {
+            height: 8px;
+            border-radius: 4px;
+            background: #E5E5EA;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--primary-color);
+            transition: width 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <!-- Authentication Screen -->
+    <div id="authScreen" class="auth-container">
+        <div class="auth-card">
+            <div class="app-logo">
+                <i class="bi bi-translate"></i>
+                <h2>Quebec French</h2>
+                <p class="text-muted">A1 → C1 in 12 Months</p>
+            </div>
+            
+            <!-- Login Form -->
+            <div id="loginForm">
+                <h4 class="mb-4">Welcome Back!</h4>
+                <form id="loginFormElement">
+                    <div class="mb-3">
+                        <input type="email" class="form-control" id="loginEmail" placeholder="Email" required>
+                    </div>
+                    <div class="mb-3">
+                        <input type="password" class="form-control" id="loginPassword" placeholder="Password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 mb-3">Login</button>
+                </form>
+                <p class="text-center mb-0">
+                    Don't have an account? 
+                    <a href="#" id="showSignup" class="text-primary">Sign Up</a>
+                </p>
+            </div>
+            
+            <!-- Signup Form -->
+            <div id="signupForm" class="hidden">
+                <h4 class="mb-4">Create Account</h4>
+                <form id="signupFormElement">
+                    <div class="mb-3">
+                        <input type="text" class="form-control" id="signupName" placeholder="Full Name" required>
+                    </div>
+                    <div class="mb-3">
+                        <input type="email" class="form-control" id="signupEmail" placeholder="Email" required>
+                    </div>
+                    <div class="mb-3">
+                        <input type="password" class="form-control" id="signupPassword" placeholder="Password (min 6 characters)" required minlength="6">
+                    </div>
+                    <div class="mb-3">
+                        <select class="form-control" id="signupLevel" required>
+                            <option value="">Starting Level</option>
+                            <option value="A1">A1 - Absolute Beginner</option>
+                            <option value="A2">A2 - Elementary</option>
+                            <option value="B1">B1 - Intermediate</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 mb-3">Create Account</button>
+                </form>
+                <p class="text-center mb-0">
+                    Already have an account? 
+                    <a href="#" id="showLogin" class="text-primary">Login</a>
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Dashboard Screen -->
+    <div id="dashboardScreen" class="hidden">
+        <div class="dashboard-header">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h3 class="mb-0">Hello, <span id="userName"></span>!</h3>
+                        <span id="userLevel" class="level-badge level-a1 mt-2">A1</span>
+                    </div>
+                    <div class="col-auto">
+                        <button class="btn btn-logout" id="logoutBtn">
+                            <i class="bi bi-box-arrow-right"></i> Logout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="container">
+            <!-- Today's Stats -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <h3 id="todayMinutes">0</h3>
+                        <p>Minutes Today</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <h3 id="questionsAnswered">0</h3>
+                        <p>Questions Today</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <h3 id="streakDays">0</h3>
+                        <p>Day Streak</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <h3 id="vocabLearned">0</h3>
+                        <p>Words Learned</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Learning Modules -->
+            <h4 class="mb-3">Learning Modules</h4>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="module-card" onclick="startReading()">
+                        <div class="module-icon">📖</div>
+                        <h5>Reading Comprehension</h5>
+                        <p class="text-muted">Practice reading with A1 level texts</p>
+                        <div class="progress-bar-custom mt-3">
+                            <div class="progress-fill" id="readingProgress" style="width: 0%"></div>
+                        </div>
+                        <small class="text-muted">0 / 50 texts completed</small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="module-card" onclick="startVocabulary()">
+                        <div class="module-icon">📚</div>
+                        <h5>Vocabulary Flashcards</h5>
+                        <p class="text-muted">Learn essential French words</p>
+                        <div class="progress-bar-custom mt-3">
+                            <div class="progress-fill" id="vocabProgress" style="width: 0%"></div>
+                        </div>
+                        <small class="text-muted">0 / 200 words mastered</small>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Family Dashboard (if applicable) -->
+            <div id="familyDashboard" class="mt-4 hidden">
+                <h4 class="mb-3">Family Progress</h4>
+                <div class="stat-card">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Your Progress</h6>
+                            <p>Level: <span id="myLevel">A1.1</span></p>
+                            <p>Study Time: <span id="myStudyTime">0h</span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Partner's Progress</h6>
+                            <p>Level: <span id="partnerLevel">A1.1</span></p>
+                            <p>Study Time: <span id="partnerStudyTime">0h</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Reading Module Screen (placeholder) -->
+    <div id="readingScreen" class="hidden">
+        <div class="container mt-4">
+            <button class="btn btn-secondary mb-3" onclick="backToDashboard()">
+                <i class="bi bi-arrow-left"></i> Back
+            </button>
+            <div class="stat-card">
+                <h3>Reading Module</h3>
+                <p>Coming soon... Building content now! 📖</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Vocabulary Module Screen (placeholder) -->
+    <div id="vocabularyScreen" class="hidden">
+        <div class="container mt-4">
+            <button class="btn btn-secondary mb-3" onclick="backToDashboard()">
+                <i class="bi bi-arrow-left"></i> Back
+            </button>
+            <div class="stat-card">
+                <h3>Vocabulary Flashcards</h3>
+                <p>Coming soon... Building flashcard system! 📚</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Firebase will be configured here
+        // Using localStorage for MVP (Firebase later)
+        
+        // Simple authentication with localStorage for MVP
+        const authScreen = document.getElementById('authScreen');
+        const dashboardScreen = document.getElementById('dashboardScreen');
+        const loginForm = document.getElementById('loginForm');
+        const signupForm = document.getElementById('signupForm');
+        
+        // Check if user is logged in
+        const currentUser = localStorage.getItem('currentUser');
+        if (currentUser) {
+            showDashboard(JSON.parse(currentUser));
+        }
+        
+        // Show/hide forms
+        document.getElementById('showSignup').addEventListener('click', (e) => {
+            e.preventDefault();
+            loginForm.classList.add('hidden');
+            signupForm.classList.remove('hidden');
+        });
+        
+        document.getElementById('showLogin').addEventListener('click', (e) => {
+            e.preventDefault();
+            signupForm.classList.add('hidden');
+            loginForm.classList.remove('hidden');
+        });
+        
+        // Login
+        document.getElementById('loginFormElement').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            // Get users from localStorage
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const user = users.find(u => u.email === email && u.password === password);
+            
+            if (user) {
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                showDashboard(user);
+            } else {
+                alert('Invalid email or password');
+            }
+        });
+        
+        // Signup
+        document.getElementById('signupFormElement').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            const level = document.getElementById('signupLevel').value;
+            
+            // Get users from localStorage
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            
+            // Check if email already exists
+            if (users.find(u => u.email === email)) {
+                alert('Email already registered');
+                return;
+            }
+            
+            // Create new user
+            const newUser = {
+                id: Date.now().toString(),
+                name,
+                email,
+                password,
+                level,
+                createdAt: new Date().toISOString(),
+                progress: {
+                    readingCompleted: 0,
+                    vocabMastered: 0,
+                    studyTimeMinutes: 0,
+                    streak: 0,
+                    lastStudyDate: null
+                }
+            };
+            
+            users.push(newUser);
+            localStorage.setItem('users', JSON.stringify(users));
+            localStorage.setItem('currentUser', JSON.stringify(newUser));
+            
+            showDashboard(newUser);
+        });
+        
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.removeItem('currentUser');
+            location.reload();
+        });
+        
+        function showDashboard(user) {
+            authScreen.classList.add('hidden');
+            dashboardScreen.classList.remove('hidden');
+            
+            // Update dashboard with user data
+            document.getElementById('userName').textContent = user.name;
+            document.getElementById('userLevel').textContent = user.level || 'A1';
+            document.getElementById('userLevel').className = `level-badge level-${(user.level || 'A1').toLowerCase()}`;
+            
+            // Update stats
+            const progress = user.progress || {};
+            document.getElementById('todayMinutes').textContent = progress.studyTimeMinutes || 0;
+            document.getElementById('questionsAnswered').textContent = progress.readingCompleted || 0;
+            document.getElementById('streakDays').textContent = progress.streak || 0;
+            document.getElementById('vocabLearned').textContent = progress.vocabMastered || 0;
+            
+            // Update progress bars
+            const readingPercent = ((progress.readingCompleted || 0) / 50) * 100;
+            const vocabPercent = ((progress.vocabMastered || 0) / 200) * 100;
+            document.getElementById('readingProgress').style.width = readingPercent + '%';
+            document.getElementById('vocabProgress').style.width = vocabPercent + '%';
+        }
+        
+        // Module navigation functions
+        window.startReading = function() {
+            dashboardScreen.classList.add('hidden');
+            document.getElementById('readingScreen').classList.remove('hidden');
+        };
+        
+        window.startVocabulary = function() {
+            dashboardScreen.classList.add('hidden');
+            document.getElementById('vocabularyScreen').classList.remove('hidden');
+        };
+        
+        window.backToDashboard = function() {
+            document.getElementById('readingScreen').classList.add('hidden');
+            document.getElementById('vocabularyScreen').classList.add('hidden');
+            dashboardScreen.classList.remove('hidden');
+        };
+    </script>
+</body>
+</html>
