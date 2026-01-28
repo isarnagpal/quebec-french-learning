@@ -9,6 +9,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     
+    <!-- Gamification Styles -->
+    <link rel="stylesheet" href="gamification-styles.css">
+    
     <style>
         :root {
             --primary-color: #0066CC;
@@ -416,6 +419,26 @@
                 </div>
             </div>
             
+            <!-- Gamification Widgets -->
+            <div class="row mb-4">
+                <!-- Daily Challenges Widget -->
+                <div class="col-md-6 mb-3">
+                    <div id="dailyChallengesWidget"></div>
+                </div>
+                
+                <!-- Streak Widget -->
+                <div class="col-md-6 mb-3">
+                    <div id="streakWidget"></div>
+                </div>
+            </div>
+            
+            <!-- Achievements Preview -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div id="achievementsPreview"></div>
+                </div>
+            </div>
+            
             <!-- Modules -->
             <h4 class="mb-3">Modules d'Apprentissage</h4>
             <div class="row">
@@ -530,6 +553,21 @@
     <script src="ai-config.js"></script>
     <script src="ai-writing-service.js"></script>
     <script src="ai-writing-ui.js"></script>
+    
+    <!-- Chart.js for Gamification Visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Gamification System -->
+    <script src="achievements.js"></script>
+    <script src="gamification-system.js"></script>
+    <script src="achievement-ui.js"></script>
+    <script src="daily-challenges.js"></script>
+    <script src="challenge-ui.js"></script>
+    <script src="level-up-animation.js"></script>
+    <script src="streak-system.js"></script>
+    <script src="streak-ui.js"></script>
+    <script src="progress-visualizations.js"></script>
+    <script src="stats-dashboard.js"></script>
     
     <script>
         // ============ UI Elements ============
@@ -687,6 +725,88 @@
             document.getElementById('questionsAnswered').textContent = progress.readingCompleted || 0;
             document.getElementById('streakDays').textContent = progress.streak || 0;
             document.getElementById('vocabLearned').textContent = progress.vocabMastered || 0;
+            
+            // Initialize Gamification Systems
+            initializeGamification(user);
+        }
+        
+        // ============ Initialize Gamification ============
+        let gamificationInitialized = false;
+        
+        function initializeGamification(user) {
+            if (gamificationInitialized) return;
+            
+            try {
+                // Initialize core systems
+                window.gamification = new GamificationSystem();
+                window.achievementsUI = new AchievementUI(window.gamification, ACHIEVEMENTS);
+                window.challengeService = new DailyChallengeService(window.gamification);
+                window.challengeUI = new ChallengeUI(window.challengeService, window.gamification);
+                window.animations = new LevelUpAnimation();
+                window.streakSystem = new StreakSystem();
+                window.streakUI = new StreakUI(window.streakSystem);
+                
+                // Render widgets
+                window.challengeUI.render('dailyChallengesWidget');
+                window.streakUI.render('streakWidget');
+                
+                // Render achievements preview (top 6 recent)
+                renderAchievementsPreview();
+                
+                gamificationInitialized = true;
+                console.log('Gamification systems initialized successfully');
+            } catch (error) {
+                console.error('Error initializing gamification:', error);
+            }
+        }
+        
+        // Render achievements preview on dashboard
+        function renderAchievementsPreview() {
+            const container = document.getElementById('achievementsPreview');
+            if (!container || !window.gamification) return;
+            
+            const stats = window.gamification.stats;
+            const unlockedAchievements = ACHIEVEMENTS.filter(a => 
+                window.gamification.checkAchievement(a.id, stats)
+            );
+            
+            const recentUnlocked = unlockedAchievements.slice(-6);
+            
+            let html = `
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            🏆 Achievements (${unlockedAchievements.length}/${ACHIEVEMENTS.length})
+                        </h5>
+                        <div class="row">
+            `;
+            
+            recentUnlocked.forEach(achievement => {
+                html += `
+                    <div class="col-6 col-md-2 mb-2 text-center">
+                        <div class="achievement-badge-mini">
+                            <div style="font-size: 2rem;">${achievement.icon}</div>
+                            <small class="d-block text-muted">${achievement.name}</small>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            if (recentUnlocked.length === 0) {
+                html += `
+                    <div class="col-12 text-center text-muted">
+                        <p>Start learning to unlock achievements! 🎯</p>
+                    </div>
+                `;
+            }
+            
+            html += `
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            container.innerHTML = html;
         }
         
         // ============ Listen for Cloud Updates ============
