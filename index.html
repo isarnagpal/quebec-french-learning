@@ -851,11 +851,45 @@
         function startReading() {
             dashboardScreen.classList.add('hidden');
             document.getElementById('readingScreen').classList.remove('hidden');
+            
+            // Initialize reading module
+            if (!window.readingModuleInstance) {
+                try {
+                    window.readingModuleInstance = new ReadingModule();
+                    window.readingModuleInstance.render('readingModule');
+                } catch (error) {
+                    console.error('Error initializing reading module:', error);
+                    document.getElementById('readingModule').innerHTML = `
+                        <div class="alert alert-warning">
+                            <h4>Module Compréhension Écrite</h4>
+                            <p>200 textes de lecture sont disponibles!</p>
+                            <p class="text-muted">Le module est en cours de chargement...</p>
+                        </div>
+                    `;
+                }
+            }
         }
 
         function startVocabulary() {
             dashboardScreen.classList.add('hidden');
             document.getElementById('vocabularyScreen').classList.remove('hidden');
+            
+            // Initialize vocabulary module
+            if (!window.vocabularyModuleInstance) {
+                try {
+                    window.vocabularyModuleInstance = new VocabularyModule();
+                    window.vocabularyModuleInstance.render('vocabularyModule');
+                } catch (error) {
+                    console.error('Error initializing vocabulary module:', error);
+                    document.getElementById('vocabularyModule').innerHTML = `
+                        <div class="alert alert-warning">
+                            <h4>Module Vocabulary</h4>
+                            <p>2000 mots de vocabulaire sont disponibles!</p>
+                            <p class="text-muted">Le module de flashcards est en cours de chargement...</p>
+                        </div>
+                    `;
+                }
+            }
         }
 
         function startWriting() {
@@ -880,11 +914,29 @@
         function startListening() {
             dashboardScreen.classList.add('hidden');
             document.getElementById('listeningScreen').classList.remove('hidden');
+            
+            // Show placeholder
+            document.getElementById('listeningModule').innerHTML = `
+                <div class="alert alert-info">
+                    <h4>🎧 Module Compréhension Orale</h4>
+                    <p>200 audios avec accent québécois</p>
+                    <p class="text-muted">Ce module sera bientôt disponible!</p>
+                </div>
+            `;
         }
 
         function startSpeaking() {
             dashboardScreen.classList.add('hidden');
             document.getElementById('speakingScreen').classList.remove('hidden');
+            
+            // Show placeholder
+            document.getElementById('speakingModule').innerHTML = `
+                <div class="alert alert-info">
+                    <h4>🗣️ Module Expression Orale</h4>
+                    <p>400 exercices de prononciation</p>
+                    <p class="text-muted">Ce module sera bientôt disponible!</p>
+                </div>
+            `;
         }
     </script>
 </body>
