@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quebec French Learning - A1 → C1</title>
+    <title>Quebec French Learning - A1 → C1 en 12 Mois</title>
     
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -18,7 +18,7 @@
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: var(--background);
         }
         
@@ -56,19 +56,10 @@
             font-weight: 600;
         }
         
-        .btn-primary:hover {
-            background: #0052A3;
-        }
-        
         .form-control {
             border-radius: 8px;
             border: 1px solid #E5E5EA;
             padding: 12px;
-        }
-        
-        .form-control:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.2rem rgba(0, 102, 204, 0.25);
         }
         
         .dashboard-header {
@@ -93,10 +84,29 @@
             margin: 0;
         }
         
-        .stat-card p {
-            margin: 0;
-            color: #8E8E93;
-            font-size: 14px;
+        .module-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            border: 2px solid transparent;
+        }
+        
+        .module-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            border-color: var(--primary-color);
+        }
+        
+        .module-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+        
+        .hidden {
+            display: none !important;
         }
         
         .level-badge {
@@ -113,107 +123,106 @@
         .level-b2 { background: #E5F5FF; color: #007AFF; }
         .level-c1 { background: #E5FFE5; color: #34C759; }
         
-        .btn-logout {
-            background: #FF3B30;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
+        .reading-text-box {
+            background: #F9F9F9;
+            padding: 24px;
+            border-radius: 12px;
+            margin: 20px 0;
+            font-size: 18px;
+            line-height: 1.8;
         }
         
-        .hidden {
-            display: none !important;
+        .flashcard {
+            width: 100%;
+            max-width: 500px;
+            height: 300px;
+            margin: 40px auto;
+            perspective: 1000px;
+            cursor: pointer;
         }
         
-        .module-card {
+        .flashcard-front, .flashcard-back {
+            width: 100%;
+            height: 100%;
             background: white;
             border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 20px;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            border: 2px solid transparent;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
         
-        .module-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-            border-color: var(--primary-color);
-        }
-        
-        .module-icon {
+        .flashcard-front h2, .flashcard-back h2 {
             font-size: 48px;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
         }
         
-        .progress-bar-custom {
-            height: 8px;
-            border-radius: 4px;
-            background: #E5E5EA;
-            overflow: hidden;
+        .option-btn {
+            margin-bottom: 10px !important;
+            text-align: left !important;
         }
         
-        .progress-fill {
-            height: 100%;
-            background: var(--primary-color);
-            transition: width 0.3s;
+        textarea.form-control {
+            min-height: 300px;
+            font-size: 16px;
+            line-height: 1.6;
         }
     </style>
 </head>
 <body>
-    <!-- Authentication Screen -->
+    <!-- Auth Screen -->
     <div id="authScreen" class="auth-container">
         <div class="auth-card">
             <div class="app-logo">
                 <i class="bi bi-translate"></i>
                 <h2>Quebec French</h2>
-                <p class="text-muted">A1 → C1 in 12 Months</p>
+                <p class="text-muted">A1 → C1 en 12 Mois</p>
             </div>
             
-            <!-- Login Form -->
             <div id="loginForm">
-                <h4 class="mb-4">Welcome Back!</h4>
+                <h4 class="mb-4">Connexion</h4>
                 <form id="loginFormElement">
                     <div class="mb-3">
                         <input type="email" class="form-control" id="loginEmail" placeholder="Email" required>
                     </div>
                     <div class="mb-3">
-                        <input type="password" class="form-control" id="loginPassword" placeholder="Password" required>
+                        <input type="password" class="form-control" id="loginPassword" placeholder="Mot de passe" required>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100 mb-3">Login</button>
+                    <button type="submit" class="btn btn-primary w-100 mb-3">Se Connecter</button>
                 </form>
                 <p class="text-center mb-0">
-                    Don't have an account? 
-                    <a href="#" id="showSignup" class="text-primary">Sign Up</a>
+                    Pas de compte? 
+                    <a href="#" id="showSignup" class="text-primary">S'inscrire</a>
                 </p>
             </div>
             
-            <!-- Signup Form -->
             <div id="signupForm" class="hidden">
-                <h4 class="mb-4">Create Account</h4>
+                <h4 class="mb-4">Créer un Compte</h4>
                 <form id="signupFormElement">
                     <div class="mb-3">
-                        <input type="text" class="form-control" id="signupName" placeholder="Full Name" required>
+                        <input type="text" class="form-control" id="signupName" placeholder="Nom complet" required>
                     </div>
                     <div class="mb-3">
                         <input type="email" class="form-control" id="signupEmail" placeholder="Email" required>
                     </div>
                     <div class="mb-3">
-                        <input type="password" class="form-control" id="signupPassword" placeholder="Password (min 6 characters)" required minlength="6">
+                        <input type="password" class="form-control" id="signupPassword" placeholder="Mot de passe (min 6 caractères)" required minlength="6">
                     </div>
                     <div class="mb-3">
                         <select class="form-control" id="signupLevel" required>
-                            <option value="">Starting Level</option>
-                            <option value="A1">A1 - Absolute Beginner</option>
-                            <option value="A2">A2 - Elementary</option>
-                            <option value="B1">B1 - Intermediate</option>
+                            <option value="">Niveau de départ</option>
+                            <option value="A1">A1 - Débutant</option>
+                            <option value="A2">A2 - Élémentaire</option>
+                            <option value="B1">B1 - Intermédiaire</option>
                         </select>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100 mb-3">Create Account</button>
+                    <button type="submit" class="btn btn-primary w-100 mb-3">Créer le Compte</button>
                 </form>
                 <p class="text-center mb-0">
-                    Already have an account? 
-                    <a href="#" id="showLogin" class="text-primary">Login</a>
+                    Déjà inscrit? 
+                    <a href="#" id="showLogin" class="text-primary">Se connecter</a>
                 </p>
             </div>
         </div>
@@ -225,12 +234,12 @@
             <div class="container">
                 <div class="row align-items-center">
                     <div class="col">
-                        <h3 class="mb-0">Hello, <span id="userName"></span>!</h3>
+                        <h3 class="mb-0">Bonjour, <span id="userName"></span>!</h3>
                         <span id="userLevel" class="level-badge level-a1 mt-2">A1</span>
                     </div>
                     <div class="col-auto">
-                        <button class="btn btn-logout" id="logoutBtn">
-                            <i class="bi bi-box-arrow-right"></i> Logout
+                        <button class="btn btn-danger" id="logoutBtn">
+                            <i class="bi bi-box-arrow-right"></i> Déconnexion
                         </button>
                     </div>
                 </div>
@@ -238,129 +247,146 @@
         </div>
         
         <div class="container">
-            <!-- Today's Stats -->
+            <!-- Stats -->
             <div class="row mb-4">
                 <div class="col-md-3">
                     <div class="stat-card">
                         <h3 id="todayMinutes">0</h3>
-                        <p>Minutes Today</p>
+                        <p>Minutes Aujourd'hui</p>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="stat-card">
                         <h3 id="questionsAnswered">0</h3>
-                        <p>Questions Today</p>
+                        <p>Questions Complétées</p>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="stat-card">
                         <h3 id="streakDays">0</h3>
-                        <p>Day Streak</p>
+                        <p>Jours d'Affilée</p>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="stat-card">
                         <h3 id="vocabLearned">0</h3>
-                        <p>Words Learned</p>
+                        <p>Mots Appris</p>
                     </div>
                 </div>
             </div>
             
-            <!-- Learning Modules -->
-            <h4 class="mb-3">Learning Modules</h4>
+            <!-- Modules -->
+            <h4 class="mb-3">Modules d'Apprentissage</h4>
             <div class="row">
                 <div class="col-md-6">
                     <div class="module-card" onclick="startReading()">
                         <div class="module-icon">📖</div>
-                        <h5>Reading Comprehension</h5>
-                        <p class="text-muted">Practice reading with A1 level texts</p>
-                        <div class="progress-bar-custom mt-3">
-                            <div class="progress-fill" id="readingProgress" style="width: 0%"></div>
-                        </div>
-                        <small class="text-muted">0 / 50 texts completed</small>
+                        <h5>Compréhension Écrite</h5>
+                        <p class="text-muted">200 textes de tous niveaux</p>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="module-card" onclick="startVocabulary()">
                         <div class="module-icon">📚</div>
-                        <h5>Vocabulary Flashcards</h5>
-                        <p class="text-muted">Learn essential French words</p>
-                        <div class="progress-bar-custom mt-3">
-                            <div class="progress-fill" id="vocabProgress" style="width: 0%"></div>
-                        </div>
-                        <small class="text-muted">0 / 200 words mastered</small>
+                        <h5>Vocabulaire</h5>
+                        <p class="text-muted">2000 mots avec répétition espacée</p>
                     </div>
                 </div>
-            </div>
-            
-            <!-- Family Dashboard (if applicable) -->
-            <div id="familyDashboard" class="mt-4 hidden">
-                <h4 class="mb-3">Family Progress</h4>
-                <div class="stat-card">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h6>Your Progress</h6>
-                            <p>Level: <span id="myLevel">A1.1</span></p>
-                            <p>Study Time: <span id="myStudyTime">0h</span></p>
-                        </div>
-                        <div class="col-md-6">
-                            <h6>Partner's Progress</h6>
-                            <p>Level: <span id="partnerLevel">A1.1</span></p>
-                            <p>Study Time: <span id="partnerStudyTime">0h</span></p>
-                        </div>
+                <div class="col-md-6">
+                    <div class="module-card" onclick="startWriting()">
+                        <div class="module-icon">✍️</div>
+                        <h5>Expression Écrite</h5>
+                        <p class="text-muted">400 sujets d'écriture</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="module-card" onclick="startListening()">
+                        <div class="module-icon">🎧</div>
+                        <h5>Compréhension Orale</h5>
+                        <p class="text-muted">200 audios avec accent québécois</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="module-card" onclick="startSpeaking()">
+                        <div class="module-icon">🗣️</div>
+                        <h5>Expression Orale</h5>
+                        <p class="text-muted">400 exercices de prononciation</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     
-    <!-- Reading Module Screen (placeholder) -->
+    <!-- Reading Screen -->
     <div id="readingScreen" class="hidden">
         <div class="container mt-4">
             <button class="btn btn-secondary mb-3" onclick="backToDashboard()">
-                <i class="bi bi-arrow-left"></i> Back
+                <i class="bi bi-arrow-left"></i> Retour
             </button>
-            <div class="stat-card">
-                <h3>Reading Module</h3>
-                <p>Coming soon... Building content now! 📖</p>
-            </div>
+            <div id="readingModule"></div>
         </div>
     </div>
     
-    <!-- Vocabulary Module Screen (placeholder) -->
+    <!-- Vocabulary Screen -->
     <div id="vocabularyScreen" class="hidden">
         <div class="container mt-4">
             <button class="btn btn-secondary mb-3" onclick="backToDashboard()">
-                <i class="bi bi-arrow-left"></i> Back
+                <i class="bi bi-arrow-left"></i> Retour
             </button>
-            <div class="stat-card">
-                <h3>Vocabulary Flashcards</h3>
-                <p>Coming soon... Building flashcard system! 📚</p>
-            </div>
+            <div id="vocabularyModule"></div>
         </div>
     </div>
     
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Writing Screen -->
+    <div id="writingScreen" class="hidden">
+        <div class="container mt-4">
+            <button class="btn btn-secondary mb-3" onclick="backToDashboard()">
+                <i class="bi bi-arrow-left"></i> Retour
+            </button>
+            <div id="writingModule"></div>
+        </div>
+    </div>
     
-    <!-- Firebase SDK -->
-    <script type="module">
-        // Firebase will be configured here
-        // Using localStorage for MVP (Firebase later)
-        
-        // Simple authentication with localStorage for MVP
+    <!-- Listening Screen -->
+    <div id="listeningScreen" class="hidden">
+        <div class="container mt-4">
+            <button class="btn btn-secondary mb-3" onclick="backToDashboard()">
+                <i class="bi bi-arrow-left"></i> Retour
+            </button>
+            <div id="listeningModule"></div>
+        </div>
+    </div>
+    
+    <!-- Speaking Screen -->
+    <div id="speakingScreen" class="hidden">
+        <div class="container mt-4">
+            <button class="btn btn-secondary mb-3" onclick="backToDashboard()">
+                <i class="bi bi-arrow-left"></i> Retour
+            </button>
+            <div id="speakingModule"></div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="content-reading.js"></script>
+    <script src="content-vocabulary.js"></script>
+    <script src="content-prompts.js"></script>
+    <script src="module-reading.js"></script>
+    <script src="module-vocabulary.js"></script>
+    <script src="module-all.js"></script>
+    
+    <script>
+        // Authentication
         const authScreen = document.getElementById('authScreen');
         const dashboardScreen = document.getElementById('dashboardScreen');
         const loginForm = document.getElementById('loginForm');
         const signupForm = document.getElementById('signupForm');
         
-        // Check if user is logged in
         const currentUser = localStorage.getItem('currentUser');
         if (currentUser) {
             showDashboard(JSON.parse(currentUser));
         }
         
-        // Show/hide forms
         document.getElementById('showSignup').addEventListener('click', (e) => {
             e.preventDefault();
             loginForm.classList.add('hidden');
@@ -373,13 +399,11 @@
             loginForm.classList.remove('hidden');
         });
         
-        // Login
         document.getElementById('loginFormElement').addEventListener('submit', (e) => {
             e.preventDefault();
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
             
-            // Get users from localStorage
             const users = JSON.parse(localStorage.getItem('users') || '[]');
             const user = users.find(u => u.email === email && u.password === password);
             
@@ -387,11 +411,10 @@
                 localStorage.setItem('currentUser', JSON.stringify(user));
                 showDashboard(user);
             } else {
-                alert('Invalid email or password');
+                alert('Email ou mot de passe invalide');
             }
         });
         
-        // Signup
         document.getElementById('signupFormElement').addEventListener('submit', (e) => {
             e.preventDefault();
             const name = document.getElementById('signupName').value;
@@ -399,16 +422,13 @@
             const password = document.getElementById('signupPassword').value;
             const level = document.getElementById('signupLevel').value;
             
-            // Get users from localStorage
             const users = JSON.parse(localStorage.getItem('users') || '[]');
             
-            // Check if email already exists
             if (users.find(u => u.email === email)) {
-                alert('Email already registered');
+                alert('Email déjà utilisé');
                 return;
             }
             
-            // Create new user
             const newUser = {
                 id: Date.now().toString(),
                 name,
@@ -419,6 +439,9 @@
                 progress: {
                     readingCompleted: 0,
                     vocabMastered: 0,
+                    writingCompleted: 0,
+                    listeningCompleted: 0,
+                    speakingCompleted: 0,
                     studyTimeMinutes: 0,
                     streak: 0,
                     lastStudyDate: null
@@ -432,7 +455,6 @@
             showDashboard(newUser);
         });
         
-        // Logout
         document.getElementById('logoutBtn').addEventListener('click', () => {
             localStorage.removeItem('currentUser');
             location.reload();
@@ -442,41 +464,29 @@
             authScreen.classList.add('hidden');
             dashboardScreen.classList.remove('hidden');
             
-            // Update dashboard with user data
             document.getElementById('userName').textContent = user.name;
             document.getElementById('userLevel').textContent = user.level || 'A1';
             document.getElementById('userLevel').className = `level-badge level-${(user.level || 'A1').toLowerCase()}`;
             
-            // Update stats
             const progress = user.progress || {};
             document.getElementById('todayMinutes').textContent = progress.studyTimeMinutes || 0;
             document.getElementById('questionsAnswered').textContent = progress.readingCompleted || 0;
             document.getElementById('streakDays').textContent = progress.streak || 0;
             document.getElementById('vocabLearned').textContent = progress.vocabMastered || 0;
-            
-            // Update progress bars
-            const readingPercent = ((progress.readingCompleted || 0) / 50) * 100;
-            const vocabPercent = ((progress.vocabMastered || 0) / 200) * 100;
-            document.getElementById('readingProgress').style.width = readingPercent + '%';
-            document.getElementById('vocabProgress').style.width = vocabPercent + '%';
         }
         
-        // Module navigation functions
-        window.startReading = function() {
-            dashboardScreen.classList.add('hidden');
-            document.getElementById('readingScreen').classList.remove('hidden');
-        };
-        
-        window.startVocabulary = function() {
-            dashboardScreen.classList.add('hidden');
-            document.getElementById('vocabularyScreen').classList.remove('hidden');
-        };
-        
-        window.backToDashboard = function() {
+        function backToDashboard() {
             document.getElementById('readingScreen').classList.add('hidden');
             document.getElementById('vocabularyScreen').classList.add('hidden');
+            document.getElementById('writingScreen').classList.add('hidden');
+            document.getElementById('listeningScreen').classList.add('hidden');
+            document.getElementById('speakingScreen').classList.add('hidden');
             dashboardScreen.classList.remove('hidden');
-        };
+            
+            // Refresh dashboard
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            if (user) showDashboard(user);
+        }
     </script>
 </body>
 </html>
